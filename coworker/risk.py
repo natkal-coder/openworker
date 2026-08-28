@@ -48,6 +48,7 @@ _ENRICHMENT_TOOLS = {
     "hunter_verify_email",
 }
 EGRESS_TOOLS = {
+    "ask_claude",  # the prompt leaves the machine via the Claude Code CLI
     "web_fetch",
     "web_search",
     "browser_open_url",

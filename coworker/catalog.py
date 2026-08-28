@@ -21,6 +21,7 @@ import aisuite as ai
 
 from .agents.base import AgentContext
 from .risk import RiskClass
+from .tools.claude_code import claude_code_tools
 from .tools.files import file_tools
 from .tools.git import git_tools
 from .tools.search import search_tools
@@ -107,6 +108,10 @@ def _todo(context: AgentContext) -> list:
     return todo_tools(context.todo)  # todo_write (drives the Progress panel)
 
 
+def _claude(context: AgentContext) -> list:
+    return claude_code_tools()  # ask_claude (one-shot, no tools, via the local `claude` CLI)
+
+
 _CAPS: list[Capability] = [
     Capability(
         id="code_files",
@@ -155,6 +160,13 @@ _CAPS: list[Capability] = [
         build=_todo,
         requires=("todo",),
         risk=(RiskClass.READ,),
+    ),
+    Capability(
+        id="claude",
+        name="Claude",
+        description="Ask Claude (Opus) a one-shot question through the local Claude Code CLI.",
+        build=_claude,
+        risk=(RiskClass.EGRESS,),
     ),
 ]
 

@@ -32,6 +32,7 @@ CODE_TOOLS = {
     "shell_task_output",
     "shell_task_kill",
     "todo_write",
+    "ask_claude",
 }
 COWORK_TOOLS = {
     "list_files",
@@ -45,6 +46,7 @@ COWORK_TOOLS = {
     "shell_task_output",
     "shell_task_kill",
     "todo_write",
+    "ask_claude",
 }
 
 
@@ -57,7 +59,7 @@ def _full_context(tmp_path) -> AgentContext:
 
 
 def test_catalog_registers_expected_ids():
-    assert {"code_files", "files", "git", "search", "shell", "todo"} <= set(CATALOG)
+    assert {"code_files", "files", "git", "search", "shell", "todo", "claude"} <= set(CATALOG)
     for cap in CATALOG.values():
         assert cap.id and cap.name and callable(cap.build)
 
@@ -101,7 +103,13 @@ def test_requirements_skip_unavailable(tmp_path):
 
     no_ws = AgentContext(workspace=None, executor=object(), todo=TodoList())
     names = _names(expand(CODE_CAPABILITIES, no_ws))
-    assert names == {"run_shell", "shell_task_output", "shell_task_kill", "todo_write"}
+    assert names == {
+        "run_shell",
+        "shell_task_output",
+        "shell_task_kill",
+        "todo_write",
+        "ask_claude",  # no context requirement
+    }
 
 
 def test_risk_summary():

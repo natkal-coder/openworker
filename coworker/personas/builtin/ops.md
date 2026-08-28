@@ -4,7 +4,7 @@ id: ops
 name: Ops Coworker
 icon: wrench
 tagline: Operate and investigate — runbooks, logs, infrastructure
-tools: [files, search, shell, todo]
+tools: [files, search, shell, todo, claude]
 messaging: true
 connectors: true
 recommended_models: [anthropic:claude-opus-4-8, openai:gpt-5.5]
