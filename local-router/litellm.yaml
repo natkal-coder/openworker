@@ -4,12 +4,21 @@
 # on the next request). num_ctx is pinned: the Modelfile default (262144) forces a reload
 # against any client using a smaller context. Start with: bash local-router/start.sh
 model_list:
-  - model_name: ornith
+  - model_name: ornith            # official Ornith 1.5 35B-A3B (Q4_K_M, text-only GGUF from HF)
+    litellm_params:
+      model: ollama_chat/hf.co/ornith-ai/Ornith-1.5-35B-A3B-GGUF:Q4_K_M
+      api_base: http://127.0.0.1:11434
+      keep_alive: 1m
+      num_ctx: 16384   # match the ClearML jobs' context so Ollama keeps ONE runner (a num_ctx change = full reload)
+      temperature: 0.6   # model card: general tasks 0.6 / top_p 0.95 / top_k 20
+      top_p: 0.95
+      top_k: 20
+  - model_name: ornith-vision     # community build with vision (robit)
     litellm_params:
       model: ollama_chat/robit/ornith-vision:35b
       api_base: http://127.0.0.1:11434
       keep_alive: 1m
-      num_ctx: 16384   # match the ClearML jobs' context so Ollama keeps ONE runner (a num_ctx change = full reload)
+      num_ctx: 16384
   - model_name: ornith-grpo
     litellm_params:
       model: ollama_chat/ornith35b-grpo-lr3e06:latest
