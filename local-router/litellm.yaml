@@ -1,0 +1,38 @@
+# Local "OpenRouter": one OpenAI-compatible endpoint (:4000) in front of every local model.
+# Apps pick a model by alias; `ollama/<name>` passes any pulled Ollama model straight through.
+# keep_alive: 1m → Ollama unloads the weights from the GPU after a minute idle (cold start
+# on the next request). num_ctx is pinned: the Modelfile default (262144) forces a reload
+# against any client using a smaller context. Start with: bash local-router/start.sh
+model_list:
+  - model_name: ornith
+    litellm_params:
+      model: ollama_chat/robit/ornith-vision:35b
+      api_base: http://127.0.0.1:11434
+      keep_alive: 1m
+      num_ctx: 16384   # match the ClearML jobs' context so Ollama keeps ONE runner (a num_ctx change = full reload)
+  - model_name: ornith-grpo
+    litellm_params:
+      model: ollama_chat/ornith35b-grpo-lr3e06:latest
+      api_base: http://127.0.0.1:11434
+      keep_alive: 1m
+      num_ctx: 16384   # match the ClearML jobs' context so Ollama keeps ONE runner (a num_ctx change = full reload)
+  - model_name: gemma4
+    litellm_params:
+      model: ollama_chat/gemma4:31b
+      api_base: http://127.0.0.1:11434
+      keep_alive: 1m
+      num_ctx: 16384   # match the ClearML jobs' context so Ollama keeps ONE runner (a num_ctx change = full reload)
+  - model_name: "ollama/*"
+    litellm_params:
+      model: "ollama_chat/*"
+      api_base: http://127.0.0.1:11434
+      keep_alive: 1m
+      num_ctx: 16384   # match the ClearML jobs' context so Ollama keeps ONE runner (a num_ctx change = full reload)
+
+litellm_settings:
+  drop_params: true
+  set_verbose: false
+
+general_settings:
+  master_key: sk-local-router   # the "API key" apps present to this gateway
+  disable_spend_logs: true
