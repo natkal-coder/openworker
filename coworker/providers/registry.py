@@ -668,6 +668,16 @@ DESCRIPTORS: list[ProviderDescriptor] = [
         recommended_model="z-ai/glm-5.2",
         env_key="OPENROUTER_API_KEY",
     ),
+    # A local OpenAI-compatible gateway (LiteLLM proxy, llama-swap, …) fronting local models
+    # under stable aliases — an OpenRouter you run yourself. Models come from its /v1/models.
+    _compat(
+        "local-router",
+        "Local router (LiteLLM)",
+        base_url="http://127.0.0.1:4000/v1",
+        recommended_model="ornith",
+        env_key="LOCAL_ROUTER_API_KEY",
+        endpoint_help="Your local gateway's OpenAI-compatible base URL.",
+    ),
     ProviderDescriptor(
         name="ollama",
         title="Ollama (local models)",

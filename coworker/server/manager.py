@@ -2963,6 +2963,8 @@ class SessionManager:
         topped up with the compat-vendor extras the matrix doesn't vouch for."""
         if name == "ollama":
             return [m.split(":", 1)[-1] for m in self._ollama_models()]
+        if name == "local-router":
+            return self._router_models()
         from ..providers.matrix import models_for_provider
 
         return list(
@@ -3208,6 +3210,22 @@ class SessionManager:
             return [
                 f"ollama:{m['name']}" for m in data.get("models", []) if m.get("name")
             ]
+        except Exception:
+            return []
+
+    def _router_models(self) -> list[str]:
+        """Live model ids from the local router's OpenAI `/v1/models` (best-effort; empty when
+        it's down) — the add-model datalist offers what the gateway actually serves."""
+        profile = self.secrets.get("provider:local-router") or {}
+        base = (profile.get("base_url") or "http://127.0.0.1:4000/v1").rstrip("/")
+        key = profile.get("api_key") or os.environ.get("LOCAL_ROUTER_API_KEY", "")
+        try:
+            import httpx
+
+            data = httpx.get(
+                base + "/models", headers={"Authorization": f"Bearer {key}"}, timeout=2.0
+            ).json()
+            return [m["id"] for m in data.get("data", []) if m.get("id")]
         except Exception:
             return []
 
